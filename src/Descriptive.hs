@@ -31,6 +31,7 @@ import Control.Monad.Identity
 import Control.Monad.State.Strict
 import Data.Bifunctor
 import Data.Monoid
+import Data.Semigroup
 
 --------------------------------------------------------------------------------
 -- Running
@@ -74,12 +75,14 @@ data Description a
   | None
   deriving (Show,Eq,Functor)
 
+instance Semigroup (Description d) where
+  None <> x = x
+  x <> None = x
+  x <> y = And x y
+
 instance Monoid (Description d) where
   mempty = None
-  mappend None x = x
-  mappend x None = x
-  mappend x y = And x y
-
+  
 -- | The bounds of a many-consumable thing.
 data Bound
   = NaturalBound !Integer
