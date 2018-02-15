@@ -251,7 +251,7 @@ instance (Monoid a) => Monoid (Result (Description d) a) where
   mempty = Succeeded mempty
 
 instance (Semigroup a, Monad m) => Semigroup (Consumer s d m a) where
-  mappend = liftA2 (<>)
+  (<>) = liftA2 (<>)
 
 instance (Monoid a, Monad m) => Monoid (Consumer s d m a) where
   mempty =
