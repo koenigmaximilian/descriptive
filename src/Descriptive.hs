@@ -232,9 +232,8 @@ sequenceHelper minb =
               [])
   where redescribe = Bounded minb UnlimitedBound
 
-instance (Monoid a) => Monoid (Result (Description d) a) where
-  mempty = Succeeded mempty
-  mappend x y =
+instance (Semigroup a) => Semigroup (Result (Description d) a) where
+  x <> y =
     case x of
       Failed e -> Failed e
       Continued e ->
@@ -247,12 +246,17 @@ instance (Monoid a) => Monoid (Result (Description d) a) where
           Failed e -> Failed e
           Continued e -> Continued e
           Succeeded b -> Succeeded (a <> b)
+          
+instance (Monoid a) => Monoid (Result (Description d) a) where
+  mempty = Succeeded mempty
+
+instance (Semigroup a, Monad m) => Semigroup (Consumer s d m a) where
+  mappend = liftA2 (<>)
 
 instance (Monoid a, Monad m) => Monoid (Consumer s d m a) where
   mempty =
     consumer (return mempty)
              (return mempty)
-  mappend = liftA2 (<>)
 
 --------------------------------------------------------------------------------
 -- Combinators
